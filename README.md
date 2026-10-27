@@ -77,6 +77,22 @@ python server.py
 
 ---
 
+## 🚀 GitHub Pages-এ লাইভ হোস্ট করার নিয়ম (Live Hosting)
+
+১. [GitHub.com](https://github.com)-এ গিয়ে একটি নতুন Repository তৈরি করুন (যেমন: `icpc-tracker`)।
+২. আপনার ফোল্ডারে থাকা [`push_to_github.bat`](file:///c:/Users/m0stafakamal/Desktop/ICPC%20Preparation/ICPC%20Regional/push_to_github.bat) ফাইলে ডাবল ক্লিক করুন এবং আপনার GitHub Repo URL পেস্ট করুন।
+   *(অথবা টার্মিনালে চালান:)*
+   ```bash
+   git remote add origin https://github.com/<YOUR_USERNAME>/<REPO_NAME>.git
+   git branch -M main
+   git push -u origin main
+   ```
+৩. গিটহাব রিপোজিটরির **Settings** -> **Pages** অপশনে যান:
+   - **Source**: ড্রপডাউন থেকে **`GitHub Actions`** সিলেক্ট করুন।
+৪. ১-২ মিনিটের মধ্যে আপনার ওয়েবসাইট লাইভ হয়ে যাবে: **`https://<YOUR_USERNAME>.github.io/<REPO_NAME>/`**
+
+---
+
 ## 📁 ফাইল স্ট্রাকচার
 
 - [`server.py`](file:///c:/Users/m0stafakamal/Desktop/ICPC%20Preparation/ICPC%20Regional/server.py) - Flask ব্যাকএন্ড ও SQLite REST API ইঞ্জিন
