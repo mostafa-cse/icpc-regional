@@ -14,11 +14,12 @@
   const STORAGE_KEY_VIEW = 'icpc_tracker_view_mode';
   const STORAGE_KEY_USER = 'icpc_tracker_current_user_v1';
   const STORAGE_KEY_CLIENT_ID = 'icpc_tracker_google_client_id_v1';
+  const DEFAULT_GOOGLE_CLIENT_ID = '886868852571-dqjv1o31q4p6emapssn1udlmgahmp2od.apps.googleusercontent.com';
 
   let allContests = [];
   let userMarks = {}; // id -> { status, starred, notes, problems: {A: 1, B: 2...} }
   let currentUser = null; // { id, name, email, picture, provider: 'google' }
-  let googleClientId = localStorage.getItem(STORAGE_KEY_CLIENT_ID) || '';
+  let googleClientId = DEFAULT_GOOGLE_CLIENT_ID;
 
   let currentFilter = {
     year: 'target-all', // 'target-all' (2023-2026), '2026', '2025', '2024', '2023', 'archive', 'all'
@@ -503,13 +504,15 @@
       }
     });
 
-    elements.btnQuickGoogleSignin.addEventListener('click', handleQuickGoogleLogin);
-    elements.btnSaveClientId.addEventListener('click', handleSaveClientId);
-    elements.btnOauthSettings.addEventListener('click', () => {
-      closeDropdown();
-      openAuthModal(true);
-    });
-    elements.btnUserLogout.addEventListener('click', handleUserLogout);
+    if (elements.btnQuickGoogleSignin) elements.btnQuickGoogleSignin.addEventListener('click', handleQuickGoogleLogin);
+    if (elements.btnSaveClientId) elements.btnSaveClientId.addEventListener('click', handleSaveClientId);
+    if (elements.btnOauthSettings) {
+      elements.btnOauthSettings.addEventListener('click', () => {
+        closeDropdown();
+        openAuthModal(true);
+      });
+    }
+    if (elements.btnUserLogout) elements.btnUserLogout.addEventListener('click', handleUserLogout);
 
     // Online Cloud Database Listeners
     if (elements.btnOpenCloudDb) {
@@ -629,19 +632,7 @@
 
   function setupGsiClient() {
     if (typeof window.google === 'undefined' || !window.google.accounts || !window.google.accounts.id) {
-      setTimeout(setupGsiClient, 500);
-      return;
-    }
-
-    if (!googleClientId || googleClientId.includes('YOUR_GOOGLE_CLIENT_ID')) {
-      if (elements.googleSigninBtnContainer) {
-        elements.googleSigninBtnContainer.innerHTML = `
-          <div style="font-size: 0.82rem; color: #94a3b8; text-align: center; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.12); border-radius: 8px;">
-            <p style="margin: 0 0 6px 0; color: #cbd5e1;">💡 <strong>Google OAuth Popup requires a Client ID</strong></p>
-            <p style="margin: 0;">Use the <strong>Direct Sign-In</strong> button above for instant 1-click access without API keys, or add your Google Cloud Client ID in settings below.</p>
-          </div>
-        `;
-      }
+      setTimeout(setupGsiClient, 400);
       return;
     }
 
@@ -650,6 +641,7 @@
         client_id: googleClientId,
         callback: window.handleGoogleCredentialResponse,
         auto_select: false,
+        cancel_on_tap_outside: true,
       });
 
       if (elements.googleSigninBtnContainer) {
@@ -657,11 +649,13 @@
         window.google.accounts.id.renderButton(
           elements.googleSigninBtnContainer,
           {
-            theme: 'filled_black',
+            type: 'standard',
+            theme: 'filled_blue',
             size: 'large',
             shape: 'pill',
             text: 'continue_with',
-            width: 280,
+            logo_alignment: 'left',
+            width: 320,
           }
         );
       }
@@ -701,13 +695,16 @@
     }
   };
 
-  function openAuthModal(openSettings = false) {
+  function openAuthModal() {
     elements.googleAuthModal.style.display = 'flex';
-    const accordion = elements.googleAuthModal.querySelector('.oauth-settings-accordion');
-    if (accordion) {
-      accordion.open = !!openSettings;
-    }
     setupGsiClient();
+    try {
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        window.google.accounts.id.prompt();
+      }
+    } catch (e) {
+      // Prompt gracefully ignored if blocked by browser
+    }
   }
 
   function closeAuthModal() {
