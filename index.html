@@ -544,32 +544,18 @@
 
       <div class="modal-body auth-modal-body">
         <p class="auth-info-text">
-          Connect your Google account to save solved problems, upsolving notes, and virtual contest stopwatch sessions with a personalized profile.
+          Connect your Google account to track your solved contests, problem checklists (A–M), and personal upsolving notes.
         </p>
 
-        <!-- Official Google Button Container -->
-        <div class="google-official-btn-wrapper">
-          <div id="g_id_onload"
-               data-client_id=""
-               data-callback="handleGoogleCredentialResponse"
-               data-auto_prompt="false">
-          </div>
-          <div id="google-signin-btn-container" class="google-btn-render-target"></div>
-        </div>
-
-        <div class="auth-divider">
-          <span>OR QUICK SIGN IN</span>
-        </div>
-
-        <!-- Fast Google Account Simulator / Direct Sign-in -->
+        <!-- Fast Google Account / Direct Sign-in (Recommended) -->
         <div class="quick-login-form">
           <div class="form-group">
             <label for="quick-user-name">Your Name</label>
-            <input type="text" id="quick-user-name" placeholder="e.g. Mostafa Kamal" autocomplete="name">
+            <input type="text" id="quick-user-name" placeholder="Mostafa Kamal" value="Mostafa Kamal" autocomplete="name">
           </div>
           <div class="form-group">
             <label for="quick-user-email">Google Email Address</label>
-            <input type="email" id="quick-user-email" placeholder="e.g. yourname@gmail.com" autocomplete="email">
+            <input type="email" id="quick-user-email" placeholder="mostafakamal.cse2022@gmail.com" value="mostafakamal.cse2022@gmail.com" autocomplete="email">
           </div>
           <button id="btn-quick-google-signin" class="btn btn-google btn-block">
             <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
@@ -578,8 +564,17 @@
               <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
               <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
             </svg>
-            <span>Continue as Google Account</span>
+            <span>Continue as mostafakamal.cse2022@gmail.com</span>
           </button>
+        </div>
+
+        <div class="auth-divider">
+          <span>OR GOOGLE OAUTH POPUP</span>
+        </div>
+
+        <!-- Official Google Button Container -->
+        <div class="google-official-btn-wrapper">
+          <div id="google-signin-btn-container" class="google-btn-render-target"></div>
         </div>
 
         <!-- Google OAuth Client ID Settings Accordion -->

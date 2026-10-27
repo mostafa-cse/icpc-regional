@@ -633,10 +633,21 @@
       return;
     }
 
+    if (!googleClientId || googleClientId.includes('YOUR_GOOGLE_CLIENT_ID')) {
+      if (elements.googleSigninBtnContainer) {
+        elements.googleSigninBtnContainer.innerHTML = `
+          <div style="font-size: 0.82rem; color: #94a3b8; text-align: center; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.12); border-radius: 8px;">
+            <p style="margin: 0 0 6px 0; color: #cbd5e1;">💡 <strong>Google OAuth Popup requires a Client ID</strong></p>
+            <p style="margin: 0;">Use the <strong>Direct Sign-In</strong> button above for instant 1-click access without API keys, or add your Google Cloud Client ID in settings below.</p>
+          </div>
+        `;
+      }
+      return;
+    }
+
     try {
-      const clientIdToUse = googleClientId || 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
       window.google.accounts.id.initialize({
-        client_id: clientIdToUse,
+        client_id: googleClientId,
         callback: window.handleGoogleCredentialResponse,
         auto_select: false,
       });
