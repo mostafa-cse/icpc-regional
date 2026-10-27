@@ -29,7 +29,7 @@
     search: '',
     sort: 'year-desc',
   };
-  let currentViewMode = 'grid'; // 'grid' | 'table'
+  let currentViewMode = 'table'; // 'table' | 'grid'
 
   // Modal active contest
   let activeModalContestId = null;
@@ -336,6 +336,8 @@
     const saved = localStorage.getItem(STORAGE_KEY_VIEW);
     if (saved === 'table' || saved === 'grid') {
       currentViewMode = saved;
+    } else {
+      currentViewMode = 'table';
     }
     updateViewModeButtons();
   }
@@ -1180,11 +1182,11 @@
             </td>
             <td>
               <div class="table-actions-cell">
-                <a href="${c.gymUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary">
-                  Gym ↗
+                <a href="${c.gymUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-cf-green" title="Open Codeforces Gym">
+                  Enter »
                 </a>
-                <button class="btn btn-sm btn-ghost" onclick="window.icpcApp.openModal(${c.id})">
-                  Notes
+                <button class="btn btn-sm btn-secondary" onclick="window.icpcApp.openModal(${c.id})" title="Practice checklist, timer & notes">
+                  Practice »
                 </button>
               </div>
             </td>
