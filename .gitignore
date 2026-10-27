@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+*.log
+
+# Local SQLite (can be kept local since Cloud DB is used for web)
+database/*.db
+
+# OS files
+.DS_Store
+Thumbs.db

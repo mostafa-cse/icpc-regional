@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ICPC Regional Contests Practice Tracker (2023 - 2026+) from Codeforces Gym. Organize, filter, mark solved, upsolve, take notes, and track your team's competitive programming journey.">
+  <title>ICPC Regional Hub | Codeforces Gym Practice & Tracker</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="navbar" id="app-navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">ICPC Regional <span class="accent-text">Tracker</span></div>
+          <div class="brand-subtitle">
+            Codeforces Gym Practice Hub (2023-2026+)
+            <span class="db-status-pill" id="db-status-badge" title="Local SQLite database active">
+              <span class="db-dot"></span>
+              <span id="db-status-text">SQLite Active</span>
+            </span>
+            <span class="cloud-status-pill" id="cloud-status-badge" title="Online Cloud Database Status (Click to configure)">
+              <span class="cloud-dot"></span>
+              <span id="cloud-status-text">Cloud Sync</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="nav-actions">
+        <button id="btn-open-cloud-db" class="btn btn-secondary" title="Online Cloud Database Sync (Google Cloud Firestore)">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+          </svg>
+          <span>Cloud DB</span>
+        </button>
+
+        <button id="btn-sync-cf" class="btn btn-primary" title="Fetch newest contests directly from Codeforces Gym API">
+          <svg class="icon-spin" id="sync-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+          <span>Sync Codeforces</span>
+        </button>
+
+        <button id="btn-export-data" class="btn btn-secondary" title="Export progress as JSON backup">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Export</span>
+        </button>
+
+        <label for="import-file-input" class="btn btn-secondary" title="Import progress from JSON backup" style="cursor: pointer;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>Import</span>
+        </label>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+
+        <button id="btn-reset-data" class="btn btn-ghost" title="Reset all progress markings">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+        </button>
+
+        <!-- Google Login / Profile Section -->
+        <div class="auth-section" id="auth-section">
+          <!-- Shown when Logged Out -->
+          <button id="btn-google-login" class="btn btn-google" title="Sign in with Google to track solved contests">
+            <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+            </svg>
+            <span>Sign in with Google</span>
+          </button>
+
+          <!-- Shown when Logged In -->
+          <div class="user-profile-chip" id="user-profile-chip" style="display: none;">
+            <img id="user-avatar-img" class="user-avatar" src="" alt="User Avatar" style="display: none;">
+            <div id="user-avatar-initial" class="user-avatar initial-avatar">U</div>
+            <span id="user-display-name" class="user-name">User</span>
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+
+            <!-- User Dropdown Menu -->
+            <div class="user-dropdown-menu" id="user-dropdown-menu" style="display: none;">
+              <div class="dropdown-header">
+                <div class="dropdown-user-name" id="dropdown-user-name">User Name</div>
+                <div class="dropdown-user-email" id="dropdown-user-email">user@gmail.com</div>
+                <div class="dropdown-badge">
+                  <span class="online-indicator"></span>
+                  <span>Google Cloud Tracking Active</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-stats-row">
+                <div class="dropdown-stat-item">
+                  <span class="dstat-num" id="user-solved-count">0</span>
+                  <span class="dstat-lbl">Solved</span>
+                </div>
+                <div class="dropdown-stat-item">
+                  <span class="dstat-num" id="user-upsolved-count">0</span>
+                  <span class="dstat-lbl">Upsolved</span>
+                </div>
+                <div class="dropdown-stat-item">
+                  <span class="dstat-num" id="user-starred-count">0</span>
+                  <span class="dstat-lbl">Starred</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" id="btn-oauth-settings">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Google OAuth Settings</span>
+              </button>
+              <button class="dropdown-item text-danger" id="btn-user-logout">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Hero / Summary Stats -->
+  <main class="main-content">
+    <section class="hero-stats-section">
+      <div class="stats-grid">
+        <div class="stat-card" data-stat="total">
+          <div class="stat-header">
+            <span class="stat-label">Total Regionals</span>
+            <span class="stat-icon icon-total">🏆</span>
+          </div>
+          <div class="stat-value" id="stat-total-count">0</div>
+          <div class="stat-footer">ICPC Gym Contests Available</div>
+        </div>
+
+        <div class="stat-card" data-stat="solved">
+          <div class="stat-header">
+            <span class="stat-label">Solved / Completed</span>
+            <span class="stat-icon icon-solved">✅</span>
+          </div>
+          <div class="stat-value" id="stat-solved-count">0</div>
+          <div class="stat-footer"><span id="stat-solved-percent">0%</span> of library cleared</div>
+        </div>
+
+        <div class="stat-card" data-stat="upsolving">
+          <div class="stat-header">
+            <span class="stat-label">In Progress / Upsolving</span>
+            <span class="stat-icon icon-upsolving">⏳</span>
+          </div>
+          <div class="stat-value" id="stat-upsolving-count">0</div>
+          <div class="stat-footer">Contests active in practice</div>
+        </div>
+
+        <div class="stat-card" data-stat="starred">
+          <div class="stat-header">
+            <span class="stat-label">Starred / Priority</span>
+            <span class="stat-icon icon-starred">⭐</span>
+          </div>
+          <div class="stat-value" id="stat-starred-count">0</div>
+          <div class="stat-footer">Bookmarked for team practice</div>
+        </div>
+      </div>
+
+      <!-- Year Progress Breakdown -->
+      <div class="year-progress-box">
+        <div class="progress-box-title">Target Years Completion (2023 - 2026)</div>
+        <div class="year-bars-grid">
+          <div class="year-bar-item">
+            <div class="year-bar-header">
+              <span class="year-badge badge-2026">2026</span>
+              <span class="year-ratio" id="prog-2026-ratio">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill fill-2026" id="prog-2026-bar" style="width: 0%"></div></div>
+          </div>
+          <div class="year-bar-item">
+            <div class="year-bar-header">
+              <span class="year-badge badge-2025">2025</span>
+              <span class="year-ratio" id="prog-2025-ratio">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill fill-2025" id="prog-2025-bar" style="width: 0%"></div></div>
+          </div>
+          <div class="year-bar-item">
+            <div class="year-bar-header">
+              <span class="year-badge badge-2024">2024</span>
+              <span class="year-ratio" id="prog-2024-ratio">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill fill-2024" id="prog-2024-bar" style="width: 0%"></div></div>
+          </div>
+          <div class="year-bar-item">
+            <div class="year-bar-header">
+              <span class="year-badge badge-2023">2023</span>
+              <span class="year-ratio" id="prog-2023-ratio">0 / 0</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill fill-2023" id="prog-2023-bar" style="width: 0%"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter & Search Toolbar -->
+    <section class="toolbar-section">
+      <!-- Year Tabs -->
+      <div class="year-tabs-container">
+        <div class="year-tabs" id="year-tabs-group" role="tablist">
+          <button class="year-tab active" data-year="target-all">
+            <span>2023 - 2026 (Focus)</span>
+            <span class="tab-count" id="count-tab-target">0</span>
+          </button>
+          <button class="year-tab" data-year="2026">
+            <span>2026</span>
+            <span class="tab-count" id="count-tab-2026">0</span>
+          </button>
+          <button class="year-tab" data-year="2025">
+            <span>2025</span>
+            <span class="tab-count" id="count-tab-2025">0</span>
+          </button>
+          <button class="year-tab" data-year="2024">
+            <span>2024</span>
+            <span class="tab-count" id="count-tab-2024">0</span>
+          </button>
+          <button class="year-tab" data-year="2023">
+            <span>2023</span>
+            <span class="tab-count" id="count-tab-2023">0</span>
+          </button>
+          <button class="year-tab" data-year="archive">
+            <span>Archive (&le; 2022)</span>
+            <span class="tab-count" id="count-tab-archive">0</span>
+          </button>
+          <button class="year-tab" data-year="all">
+            <span>All Contests</span>
+            <span class="tab-count" id="count-tab-all">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls Row: Search + Filters + View Toggle -->
+      <div class="controls-bar">
+        <!-- Search -->
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="input-search" placeholder="Search by contest name, gym ID (e.g. 104012), or city..." autocomplete="off">
+          <button id="btn-clear-search" class="clear-search-btn" title="Clear search" style="display: none;">&times;</button>
+        </div>
+
+        <!-- Filter Selects -->
+        <div class="filters-row">
+          <div class="select-wrapper">
+            <label for="filter-region">Region</label>
+            <select id="filter-region">
+              <option value="all">All Regions</option>
+              <option value="Asia Dhaka">🇧🇩 Asia Dhaka / Bangladesh</option>
+              <option value="Asia Region">🌏 Asia Regional (Pacific / West / East)</option>
+              <option value="Europe Region">🇪🇺 Europe (NWERC, SWERC, CERC, EUC, NERC)</option>
+              <option value="North America">🇺🇸 North America (NAC & Regionals)</option>
+              <option value="Latin America">🌎 Latin America & Brazil</option>
+              <option value="Africa & Arab (ACPC)">🌍 Africa & Arab (ACPC)</option>
+              <option value="Global / Other Region">🌐 Other / Subregionals</option>
+            </select>
+          </div>
+
+          <div class="select-wrapper">
+            <label for="filter-status">Practice Status</label>
+            <select id="filter-status">
+              <option value="all">All Statuses</option>
+              <option value="solved">✅ Solved / Completed</option>
+              <option value="upsolving">⏳ In Progress / Upsolving</option>
+              <option value="todo">📌 To Do / Plan</option>
+              <option value="starred">⭐ Starred Only</option>
+              <option value="unstarted">⚪ Not Started</option>
+            </select>
+          </div>
+
+          <div class="select-wrapper">
+            <label for="filter-type">Contest Type</label>
+            <select id="filter-type">
+              <option value="all">All Types</option>
+              <option value="Regional Contest">Regional Finals</option>
+              <option value="Championship / Super-Regional">Championship / Super-Regional</option>
+              <option value="Subregional">Subregional</option>
+              <option value="Preliminary / Qualifier">Preliminary / Qualifier</option>
+              <option value="Invitational">Invitational / Other</option>
+            </select>
+          </div>
+
+          <div class="select-wrapper">
+            <label for="select-sort">Sort By</label>
+            <select id="select-sort">
+              <option value="year-desc">Year (Newest 2026 &rarr; Older)</option>
+              <option value="year-asc">Year (Oldest &rarr; Newer)</option>
+              <option value="id-desc">Gym ID (Highest / Newest)</option>
+              <option value="id-asc">Gym ID (Lowest / Oldest)</option>
+              <option value="name-asc">Contest Name (A - Z)</option>
+            </select>
+          </div>
+
+          <!-- View Mode Toggle -->
+          <div class="view-toggle-group">
+            <button id="view-mode-grid" class="view-btn active" title="Grid Card View">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+            <button id="view-mode-table" class="view-btn" title="Compact Table View">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contest Results Header -->
+    <div class="results-header">
+      <div class="results-info">
+        Showing <span id="showing-count" class="highlight-count">0</span> contests
+        <span id="active-filter-tags" class="active-tags"></span>
+      </div>
+      <div class="results-actions">
+        <button id="btn-quick-export-list" class="btn btn-sm btn-ghost" title="Copy markdown list of filtered contests">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy Summary</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Contests Container (Grid View & Table View) -->
+    <section id="contests-grid" class="contests-grid-container">
+      <!-- Rendered dynamically -->
+    </section>
+
+    <div id="contests-table-container" class="contests-table-wrapper" style="display: none;">
+      <table class="contests-table">
+        <thead>
+          <tr>
+            <th width="45">Star</th>
+            <th width="85">Gym ID</th>
+            <th width="90">Year</th>
+            <th width="140">Region</th>
+            <th>Contest Title</th>
+            <th width="140">Status</th>
+            <th width="100">Progress</th>
+            <th width="160">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="contests-table-body">
+          <!-- Rendered dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="empty-state" style="display: none;">
+      <div class="empty-icon">🔍</div>
+      <h3>No contests match your filters</h3>
+      <p>Try clearing your search query or selecting a different year/region filter.</p>
+      <button id="btn-reset-filters" class="btn btn-secondary">Reset Filters</button>
+    </div>
+  </main>
+
+  <!-- Contest Details & Practice Modal -->
+  <div id="contest-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <div class="modal-badges">
+            <span class="badge" id="modal-badge-id">Gym 104012</span>
+            <span class="badge" id="modal-badge-year">2024</span>
+            <span class="badge" id="modal-badge-region">Asia Region</span>
+            <span class="badge" id="modal-badge-type">Regional</span>
+          </div>
+          <h2 id="modal-contest-title" class="modal-title">Contest Title</h2>
+        </div>
+        <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Quick Links Row -->
+        <div class="modal-links-bar">
+          <a id="modal-link-gym" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+            <span>Open in Codeforces Gym</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+          <a id="modal-link-standings" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+            <span>View Standings</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </a>
+          <button id="btn-modal-copy-link" class="btn btn-ghost btn-sm">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span>Copy Link</span>
+          </button>
+        </div>
+
+        <!-- Practice Session & Timer Section -->
+        <div class="modal-section timer-section">
+          <div class="section-title-row">
+            <div class="section-heading">5-Hour Virtual Contest Stopwatch</div>
+            <div class="timer-display" id="modal-timer-display">05:00:00</div>
+          </div>
+          <div class="timer-controls">
+            <button id="btn-timer-start" class="btn btn-sm btn-emerald">Start Timer</button>
+            <button id="btn-timer-pause" class="btn btn-sm btn-secondary" style="display: none;">Pause</button>
+            <button id="btn-timer-reset" class="btn btn-sm btn-ghost">Reset (5h)</button>
+            <span class="timer-hint">Simulate real ICPC 5-hour contest conditions!</span>
+          </div>
+        </div>
+
+        <!-- Status Marking & Rating -->
+        <div class="modal-section">
+          <div class="section-heading">Contest Status & Priority</div>
+          <div class="status-selection-grid">
+            <label class="status-option-card">
+              <input type="radio" name="modal-status" value="unstarted">
+              <div class="status-content">
+                <span class="status-dot dot-unstarted"></span>
+                <span class="status-title">Not Started</span>
+              </div>
+            </label>
+            <label class="status-option-card">
+              <input type="radio" name="modal-status" value="todo">
+              <div class="status-content">
+                <span class="status-dot dot-todo"></span>
+                <span class="status-title">To Do / Plan</span>
+              </div>
+            </label>
+            <label class="status-option-card">
+              <input type="radio" name="modal-status" value="upsolving">
+              <div class="status-content">
+                <span class="status-dot dot-upsolving"></span>
+                <span class="status-title">In Progress / Upsolving</span>
+              </div>
+            </label>
+            <label class="status-option-card">
+              <input type="radio" name="modal-status" value="solved">
+              <div class="status-content">
+                <span class="status-dot dot-solved"></span>
+                <span class="status-title">Completed / Solved</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Interactive Problem Checklist (A to M) -->
+        <div class="modal-section">
+          <div class="section-title-row">
+            <div class="section-heading">Problem Checklist & Verdicts</div>
+            <div class="solved-ratio-pill" id="modal-solved-ratio">0 / 13 Solved</div>
+          </div>
+          <p class="section-desc">Click each problem letter to mark as: <strong>⚪ Unsolved &rarr; 🟢 Solved in Contest &rarr; 🟡 Upsolved &rarr; ⚪ Reset</strong></p>
+          <div class="problems-grid" id="modal-problems-container">
+            <!-- Rendered dynamically Problem A to M -->
+          </div>
+        </div>
+
+        <!-- Notes & Teammate Remarks -->
+        <div class="modal-section">
+          <div class="section-heading">Team Practice Notes & Editorial Thoughts</div>
+          <textarea id="modal-notes-input" class="notes-textarea" placeholder="Write key problem observations, editorial links, topics tested (DP, Geometry, Flow), teammate assignments, or reminders..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-modal-save" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Sign In & OAuth Modal -->
+  <div id="google-auth-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card modal-auth-card">
+      <div class="modal-header">
+        <div class="auth-modal-title-box">
+          <svg class="google-icon-large" viewBox="0 0 24 24" width="32" height="32">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <div>
+            <h2 class="modal-title">Sign in with Google</h2>
+            <div class="auth-modal-subtitle">Track your ICPC Regional progress across devices</div>
+          </div>
+        </div>
+        <button id="btn-close-auth-modal" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body auth-modal-body">
+        <p class="auth-info-text">
+          Connect your Google account to save solved problems, upsolving notes, and virtual contest stopwatch sessions with a personalized profile.
+        </p>
+
+        <!-- Official Google Button Container -->
+        <div class="google-official-btn-wrapper">
+          <div id="g_id_onload"
+               data-client_id=""
+               data-callback="handleGoogleCredentialResponse"
+               data-auto_prompt="false">
+          </div>
+          <div id="google-signin-btn-container" class="google-btn-render-target"></div>
+        </div>
+
+        <div class="auth-divider">
+          <span>OR QUICK SIGN IN</span>
+        </div>
+
+        <!-- Fast Google Account Simulator / Direct Sign-in -->
+        <div class="quick-login-form">
+          <div class="form-group">
+            <label for="quick-user-name">Your Name</label>
+            <input type="text" id="quick-user-name" placeholder="e.g. Mostafa Kamal" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="quick-user-email">Google Email Address</label>
+            <input type="email" id="quick-user-email" placeholder="e.g. yourname@gmail.com" autocomplete="email">
+          </div>
+          <button id="btn-quick-google-signin" class="btn btn-google btn-block">
+            <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+            </svg>
+            <span>Continue as Google Account</span>
+          </button>
+        </div>
+
+        <!-- Google OAuth Client ID Settings Accordion -->
+        <details class="oauth-settings-accordion">
+          <summary>⚙️ Google Cloud OAuth Client ID Settings (Optional)</summary>
+          <div class="oauth-config-box">
+            <p class="config-desc">
+              To use Google's native popup on your domain or localhost, generate an OAuth 2.0 Web Client ID in 
+              <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a> 
+              and authorize <code>http://localhost:3300</code> as an authorized JavaScript origin.
+            </p>
+            <div class="form-group">
+              <label for="input-google-client-id">Google Client ID</label>
+              <input type="text" id="input-google-client-id" placeholder="e.g. 123456789-abcdef.apps.googleusercontent.com">
+            </div>
+            <button id="btn-save-client-id" class="btn btn-secondary btn-sm">Save Client ID</button>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Online Cloud Database Modal -->
+  <div id="cloud-db-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card modal-auth-card">
+      <div class="modal-header">
+        <div class="auth-modal-title-box">
+          <div class="cloud-icon-circle">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="modal-title">Online Cloud Database</h2>
+            <div class="auth-modal-subtitle">Real-time cross-device sync with Google Cloud Firestore</div>
+          </div>
+        </div>
+        <button id="btn-close-cloud-modal" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body auth-modal-body">
+        <div class="cloud-status-card">
+          <div class="cloud-card-header">
+            <div class="cloud-card-title">
+              <span class="online-indicator" id="cloud-card-indicator"></span>
+              <span id="cloud-conn-status">Cloud Database: Connected</span>
+            </div>
+            <span class="cloud-provider-tag">Google Cloud Firestore</span>
+          </div>
+          <div class="cloud-metrics-grid">
+            <div class="cmetric-item">
+              <span class="cmetric-val" id="cloud-records-synced">495</span>
+              <span class="cmetric-lbl">Cloud Contests</span>
+            </div>
+            <div class="cmetric-item">
+              <span class="cmetric-val" id="cloud-sync-state">Live</span>
+              <span class="cmetric-lbl">Sync Engine</span>
+            </div>
+            <div class="cmetric-item">
+              <span class="cmetric-val" id="cloud-last-sync">Just now</span>
+              <span class="cmetric-lbl">Last Synced</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="auth-info-text">
+          Your marks, problem checklist (A-M), and team notes sync automatically to the cloud database when you are signed in. Teammates can view real-time contest progress across devices.
+        </p>
+
+        <!-- Cloud Actions Row -->
+        <div class="cloud-actions-row">
+          <button id="btn-cloud-sync-now" class="btn btn-primary btn-sm">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Sync to Cloud Now</span>
+          </button>
+          <button id="btn-cloud-pull-now" class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Pull from Cloud</span>
+          </button>
+        </div>
+
+        <!-- Custom Firebase Cloud Config Accordion -->
+        <details class="oauth-settings-accordion">
+          <summary>⚙️ Custom Firebase / Cloud Project Config (Optional)</summary>
+          <div class="oauth-config-box">
+            <p class="config-desc">
+              Connect your own Google Cloud / Firebase project for team-dedicated cloud storage. Get credentials from 
+              <a href="https://console.firebase.google.com" target="_blank" rel="noopener">Firebase Console</a> &rarr; Project Settings &rarr; Web Apps.
+            </p>
+            <div class="form-group">
+              <label for="input-fb-project-id">Firebase Project ID</label>
+              <input type="text" id="input-fb-project-id" placeholder="e.g. icpc-regional-hub">
+            </div>
+            <div class="form-group">
+              <label for="input-fb-api-key">Web API Key</label>
+              <input type="text" id="input-fb-api-key" placeholder="e.g. AIzaSyB...">
+            </div>
+            <div class="form-group">
+              <label for="input-fb-auth-domain">Auth Domain</label>
+              <input type="text" id="input-fb-auth-domain" placeholder="e.g. icpc-regional-hub.firebaseapp.com">
+            </div>
+            <div class="settings-btns-row">
+              <button id="btn-save-cloud-config" class="btn btn-secondary btn-sm">Save Config</button>
+              <button id="btn-reset-cloud-config" class="btn btn-ghost btn-sm">Reset to Default</button>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Data & Cloud Scripts: Include static fallback first so file:// works immediately, then cloud and main app -->
+  <script src="data/contests.js"></script>
+  <script src="cloud-db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
